@@ -1,0 +1,21 @@
+Sub autotime()
+
+'화면 업데이트 비활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = False
+'수식 계산 옵션 수동 설정(성능 개선 코드)
+Application.Calculation = xlCalculationManual
+
+Dim k As Integer
+
+For k = 3 To 19920
+If IsEmpty(Sheets("#거래명세전체").Cells(k, 6).Value) = True And IsEmpty(Sheets("#거래명세전체").Cells(k, 8).Value) = False Then
+Sheets("#거래명세전체").Cells(k, 6).Value = Format(Now(), "yyyy-mm-dd")
+End If
+Next k
+
+'화면 업데이트 활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = True
+'수식 계산 옵션 자동 설정 복원 (성능 개선 코드)
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
