@@ -1,0 +1,28 @@
+Sub order_add()
+
+'화면 업데이트 비활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = False
+'수식 계산 옵션 수동 설정(성능 개선 코드)
+Application.Calculation = xlCalculationManual
+
+Dim i As Worksheet
+Set i = Worksheets("#거래명세전체")
+
+If (i.AutoFilterMode And i.FilterMode) Or i.FilterMode Then
+i.ShowAllData
+End If
+
+Dim rng As Range
+Set rng = Sheets("#거래명세전체").Cells(Rows.Count, "H").End(3)(2)
+rng.Resize(, 3) = Range("g4:i4").Value
+
+'메모리 초기화
+Set i = Nothing
+Set rng = Nothing
+
+'화면 업데이트 활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = True
+'수식 계산 옵션 자동 설정 복원 (성능 개선 코드)
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
