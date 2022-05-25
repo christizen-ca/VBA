@@ -1,0 +1,91 @@
+Sub find_orders()
+
+'   화면 업데이트 비활성화 설정 (성능 개선 코드)
+    Application.ScreenUpdating = False
+'   수식 계산 옵션 수동 설정(성능 개선 코드)
+    Application.Calculation = xlCalculationManual
+    
+'   거래내역 조회 초기화(삭제)
+    Range("P4:T63").ClearContents
+    
+    Dim rngAll As Range         '전체 데이터 영역을 넣을 변수
+    Dim rngC As Range           '전체영역의 각 셀을 넣을 변수
+    Dim C As Range              '검색하여 찾은 영역을 넣을 변수
+    Dim strAddr As String       '검색한 셀의 주소를 넣을 변수
+    
+'   첫 번째 시트 O열의 데이터 영역을 개체변수 rngAll 에 넣음 (O2와 15는 모두 O열을 의미하며 일치시켜야 함)
+'   O열에 있는 값을 모두 찾아서 해당 변수에 넣는다는 의미. 찾을 값이 여러개인 경우 값들이 해당 변수에 저장 (찾을 값이 여러개여도 찾게 됨)
+    Set rngAll = Range("O2", Cells(Rows.Count, 15).End(3)(1))
+
+'   전체영역(rngAll)의 각셀(rngC)을 순환
+    For Each rngC In rngAll
+        
+'       With Sheets("#거래명세전체").Columns(1)          '데이터 시트 전체를 지정 시(1은 A열을 의미)
+
+'       데이터 시트의 특정 영역을 지정
+        With Sheets("#거래명세전체").Range("a2:a19868")
+        
+'           rngC값으로 대상 시트의 특정 열(Column(1)의 1은 A열을 의미하며, Rows.Count, "A"의 "A"와 일치해야 오류가 발생하지 않음
+            Set C = Sheets("#거래명세전체").Range("a2:a19868").Find(What:=rngC, After:=Sheets("#거래명세전체").Columns(1).Cells(Rows.Count, "A").End(3)(1), Lookat:=xlWhole)
+            
+        End With
+        
+'       Find로 찾고자 하는 데이터가 시트 내에 존재하면
+        If Not C Is Nothing Then
+        
+            '---------------------------------------------------
+            ' 첫번째 일치한 셀의 값을 처리할 코드
+            '---------------------------------------------------
+            
+'           첫 일치하는 주소를 strAddr 변수에 넣음
+            strAddr = C.Address
+            
+'           (Rows.Count, 숫자) 부분의 숫자는 출력하고자 하는 시트의 행(예:A,B,C)을 의미 ("P"대신 숫자 16을 지정할 수 있음)
+'           With Sheets("#거래명세서_대일지퍼_대용량").Cells(Rows.Count, "P")
+
+
+'           현재 선택한 시트로 지정
+            With ActiveSheet.Cells(Rows.Count, "P")
+
+                                                                 
+'               Resize(, 숫자) 부분의 숫자는 일치하는 열 전체 데이터에서 가져올 행(예:A,B,C,D,E)의 개수
+'               Rows.Count 후 End(3)(2)는 출력한 데이터 바로 아래에 값을 붙여넣는다는 것을 의미
+                ActiveSheet.Cells(Rows.Count, "P").End(3)(2).Resize(, 5) = C.Resize(, 5).Value
+
+            
+            '----------------------------------------------------------
+            ' 두 번째 부터 일치한 셀의 값을 처리할 코드
+            '----------------------------------------------------------
+            
+'           첫 번째 일치한 셀의 값을 처리하고 다음 실행 명령
+            Do
+            
+'               FindNext 함수를 이용해서 찾고자 하는 시트 내에서 다음에 일치하는 값을 찾음
+                Set C = Sheets("#거래명세전체").Range("a2:a19868").FindNext(C)
+                
+'               주소가 처음찾은 값의 주소와 일치 시 Do구문종료
+                If strAddr = C.Address Then Exit Do
+                
+'               다음 일치한 데이터를 출력할 시트의 해당 위치에 입력
+                ActiveSheet.Cells(Rows.Count, "P").End(3)(2).Resize(, 5) = C.Resize(, 5).Value
+                
+'           데이터가 있는 대상 시트에서 찾는 값과 일치하는 데이터가 없을 때까지 반복
+            Loop While Not C Is Nothing
+            
+            End With
+            
+        End If
+        
+'   다음 찾을 값에 대해서 반복 실행(찾을 값이 여러개여도 해당 값을 찾아서 연속적 반복
+    Next rngC
+    
+    
+    Set rngAll = Nothing    '개체변수 초기화(메모리 비우기)
+    Set C = Nothing         '개체변수 초기화(메모리 비우기)
+    
+'   화면 업데이트 활성화 설정 (성능 개선 코드)
+    Application.ScreenUpdating = True
+'   수식 계산 옵션 자동 설정 복원 (성능 개선 코드)
+    Application.Calculation = xlCalculationAutomatic
+
+End Sub
