@@ -1,0 +1,18 @@
+Sub rowhidden()
+
+Dim i As Integer
+
+'78번 열에서 137번 열까지 순환하며 확인
+For i = 78 To 137
+
+'U열(숫자로 표기하면 21로 입력하면 됨)의 값이 0이면 열 숨김
+'대상이 되는 셀의 값이 정상적으로 공백("") 처리가 되어야 열이 숨김 처리. A열의 값이 공백처리가 되도록 B열, C열 내 수식을 If 문으로 전처리하였음
+If Cells(i, "U") = 0 Then
+Rows(i).Hidden = True
+End If
+
+Next i
+
+'Cells(74, 17).Select
+
+End Sub
