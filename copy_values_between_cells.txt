@@ -1,0 +1,22 @@
+Sub copyvalue()
+'셀 간 값 복사 방법
+'Cells(75, "Q") = Cells(75, "C")
+'Cells(76, "Q") = Cells(76, "C")
+'Cells(77, "Q") = Cells(77, "C")
+
+'복사 대상 영역 초기화
+Range("U78:U137").ClearContents
+
+'적요 값 복사
+Range("C78:C137").Copy
+Range("U78:U137").PasteSpecial xlPasteValues
+
+'카피영역 선택 취소
+Application.CutCopyMode = False
+
+'선택영역 자동 높이값 조정(자동 줄바꿈 서식 적용 필요)
+Cells.EntireRow.AutoFit
+
+'특정 셀 선택 (선택 영역 해제 시)
+Cells(64, "B").Select
+End Sub
