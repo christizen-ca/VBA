@@ -1,0 +1,12 @@
+Sub scroll_up_in_entire_sheets()
+    Dim xSheet As Worksheet
+	
+    For Each xSheet In ActiveWorkbook.Sheets
+        xSheet.Activate
+
+        '커서랑 상관없이 스크롤이 맨 위로 이동
+        ActiveWindow.ScrollRow = 1
+
+    Next
+    ActiveWorkbook.Worksheets(1).Activate
+End Sub
