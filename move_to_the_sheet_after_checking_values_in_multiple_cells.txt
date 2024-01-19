@@ -1,0 +1,88 @@
+Sub move_transaction_sheet()
+'각 업체별 거래명세서 시트로 이동하는 함수
+
+'화면 업데이트 비활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = False
+'수식 계산 옵션 수동 설정(성능 개선 코드)
+Application.Calculation = xlCalculationManual
+    
+    Dim company_name As String      '코드 비교 변수(업체명이 키코드)
+    Dim tax_company As String       '신고업체 저장 변수
+    
+    Dim varC        'A_업체정보 시트 내 내역을 넣을 배열 변수
+	
+    Dim i As Long   '반복구문에 사용할 변수
+    Dim j As Long   '반복구문에 사용할 변수
+        
+    Dim w As Worksheet
+    Set w = Worksheets("A_업체정보")
+    
+    '조회코드값 초기화
+    company_name = Cells(2, "B") '각 업체시트의 업체명을 회사명으로 초기화
+    
+    '☆★☆★다른 시트의 값을 활성화 시키지 않고 배열에 값을 넣을 수 없기 때문에 특정 시트를 먼저 활성화
+    w.Activate
+    
+    '복사할 시트의 필터가 걸려있다면 필터 해제
+    If (w.AutoFilterMode And w.FilterMode) Or w.FilterMode Then
+        w.ShowAllData
+    End If
+    
+    'A_업체정보 시트의 값을 배열에 할당
+    varC = Range("A4", Cells(Rows.Count, "E").End(3))                   'A4셀부터 E열의 마지막 행까지의 값을 배열에 넣음)
+    
+    '☆★☆★후순위에 있는 열의 값이 먼저 선언되어야 배열의 값이 제대로 갱신됨. (예: 가져올 열이 B열, C열이라면 C가 먼저 선언이 되어야 함)
+        
+        '시트 내 사용 일치여부 판단
+        
+        For j = 1 To UBound(varC, 1)                '1 ~ varC 배열 상한값까지 반복
+            If company_name = varC(j, 1) Then       '배열의 첫번째 열("시트 내 사용")이랑 company_name을 비교
+            
+                tax_company = varC(j, 5)            '배열 내 "신고업체" 리턴
+                Exit For                            'For 구문 종료
+                
+            ElseIf company_name = varC(j, 2) Then   '배열의 두번째 열("별칭1")이랑 company_name을 비교
+                
+                tax_company = varC(j, 5)            '배열 내 "신고업체" 리턴
+                Exit For                            'For 구문 종료
+                
+            ElseIf company_name = varC(j, 3) Then   '배열의 세번째 열("별칭2")이랑 company_name을 비교
+                
+                tax_company = varC(j, 5)            '배열 내 "신고업체" 리턴
+                Exit For                            'For 구문 종료
+                
+            End If
+        Next j
+        
+    If tax_company = "대일" Then
+        Worksheets("#거래명세서_대일").Activate
+    
+    ElseIf tax_company = "대일지퍼" Then
+        Worksheets("#거래명세서_대일지퍼").Activate
+        
+    ElseIf tax_company = "대일상사" Then
+        Worksheets("#거래명세서_대일상사").Activate
+        
+    ElseIf tax_company = "대일컴퍼니" Then
+        Worksheets("#거래명세서_대일컴퍼니").Activate
+    
+    Else
+        MsgBox "업체가 제대로 등록되었는지 확인해주세요."
+    
+    End If
+
+
+   
+    '변수 초기화
+    Set w = Nothing
+
+   
+    '배열 삭제
+    Erase varC
+   
+'화면 업데이트 활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = True
+'수식 계산 옵션 자동 설정 복원 (성능 개선 코드)
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
