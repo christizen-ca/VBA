@@ -1,0 +1,67 @@
+Sub changecellcolor_entiresheet_entire_refresh()
+
+'거래명세전체 시트 내 거래유형, 업체정보에 따라 배열로 셀 색상 갱신을 위한 함수
+
+'화면 업데이트 비활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = False
+'수식 계산 옵션 수동 설정(성능 개선 코드)
+Application.Calculation = xlCalculationManual
+    
+Dim varC        '거래유형 열을 넣을 배열 변수
+Dim varD        '신고업체 열을 넣을 배열 변수
+    
+Dim i As Long   '반복구문에 사용할 변수
+
+Dim w As Worksheet
+Set w = Worksheets("#거래명세전체")
+
+'복사할 시트의 필터가 걸려있다면 필터 해제
+If (w.AutoFilterMode And w.FilterMode) Or w.FilterMode Then
+    w.ShowAllData
+End If
+
+'거래유형 열의 값을 배열에 할당
+varC = Range("F7", Cells(Rows.Count, "F").End(3))                   'F7셀부터 F열의 마지막 행까지의 값을 배열에 넣음
+
+'신고업체 열의 값을 배열에 할당
+varD = Range("P7", Cells(Rows.Count, "P").End(3))                   'P7셀부터 P열의 마지막 행까지의 값을 배열에 넣음
+
+'겨래유형이 "세"인 경우 색상채움
+For i = 1 To UBound(varC, 1)                        '1 ~ varC 배열 상한값까지 반복
+    If varC(i, 1) = "세" Then                       '세금 거래내역이면
+            
+        Cells(i + 6, 6).Interior.ColorIndex = 40    '첫번째 행번호가 F7이기 때문에 i+6으로 시작
+            
+    End If
+Next i
+
+'신고업체 업체정보별 색상채움
+For i = 1 To UBound(varD, 1)                        '1 ~ varD 배열 상한값까지 반복
+    If varD(i, 1) = "대일지퍼" Then
+        Cells(i + 6, 16).Interior.ColorIndex = 40
+        
+    ElseIf varD(i, 1) = "대일상사" Then
+        Cells(i + 6, 16).Interior.ColorIndex = 37
+                
+    ElseIf varD(i, 1) = "대일컴퍼니" Then
+        Cells(i + 6, 16).Interior.ColorIndex = 45
+
+    ElseIf varD(i, 1) = "대일" Then
+        Cells(i + 6, 16).Interior.ColorIndex = 24
+                
+    End If
+Next i
+        
+'변수 초기화
+Set w = Nothing
+  
+'배열 삭제
+Erase varC
+Erase varD
+   
+'화면 업데이트 활성화 설정 (성능 개선 코드)
+Application.ScreenUpdating = True
+'수식 계산 옵션 자동 설정 복원 (성능 개선 코드)
+Application.Calculation = xlCalculationAutomatic
+
+End Sub
