@@ -1,0 +1,6 @@
+Sub scroll_down_in_a_sheet()
+'거래명세 전체 시트에서 커서를 데이터가 있는 가장 아래 열로 이동(최근 거래내역 이동)하기 위한 함수
+        
+        ActiveWindow.ScrollRow = Cells(Rows.Count, 3).End(xlUp).Row
+
+End Sub
