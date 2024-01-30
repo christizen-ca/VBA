@@ -1,16 +1,28 @@
 Sub autotime()
 
+Dim k As Integer
+Dim lastcell As Integer
+
 '화면 업데이트 비활성화 설정 (성능 개선 코드)
 Application.ScreenUpdating = False
 '수식 계산 옵션 수동 설정(성능 개선 코드)
 Application.Calculation = xlCalculationManual
 
-Dim k As Integer
 
-For k = 3 To 19920
-If IsEmpty(Sheets("#거래명세전체").Cells(k, 6).Value) = True And IsEmpty(Sheets("#거래명세전체").Cells(k, 8).Value) = False Then
-Sheets("#거래명세전체").Cells(k, 6).Value = Format(Now(), "yyyy-mm-dd")
-End If
+'거래명세전체 자동날짜 마지막 열번호 찾기(F열의 마지막 번호 찿기)
+lastcell = Sheets("#거래명세전체").Cells(Rows.Count, "E").End(xlUp).Row
+
+'마지막 셀 위치 체크(디버깅)
+'Debug.Print lastcell
+
+'마지막 셀 위치 기준 자동날짜 입력 범위 동적 지정
+k = lastcell
+
+'적요가 먼저 추가되고 시간이 나중에 추가됨에 따라 E열(거래일)의 lastcell값이 G열(적요)의 lastcell값보다 1칸 위에 있음에 따라 k+1처리를 해야 정상적으로 시간이 표기
+For k = k To k + 1
+    If IsEmpty(Sheets("#거래명세전체").Cells(k, 5).Value) = True And IsEmpty(Sheets("#거래명세전체").Cells(k, 7).Value) = False Then
+        Sheets("#거래명세전체").Cells(k, 5).Value = Format(Now(), "yyyy-mm-dd")
+    End If
 Next k
 
 '화면 업데이트 활성화 설정 (성능 개선 코드)
